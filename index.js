@@ -17,6 +17,7 @@ class SysMonit {
   bindMetrics() {
     rx2.metric('cpu', () => this.report.cpu.load)
     rx2.metric('cpus', () => this.report.cpu.loads)
+    rx2.metric('cpu:temp', () => this.report.cpu.temperature)
     rx2.metric('mem:total', () => this.report.mem.total)
     rx2.metric('mem:free', () => this.report.mem.free)
     rx2.metric('mem:active', () => this.report.mem.active)
@@ -43,6 +44,8 @@ class SysMonit {
     rx2.metric('graphics:mem:total', () => this.report.graphics.memTotal)
     rx2.metric('graphics:mem:used', () => this.report.graphics.memUsed)
     rx2.metric('graphics:temp', () => this.report.graphics.temperature)
+
+    //rx2.transpose('report', () => this.report)
   }
 
   start() {
