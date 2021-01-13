@@ -6,6 +6,7 @@ class SysMonit {
   constructor() {
     this.sysinfos = new SystemInfos()
     this.report = {}
+    this.pass = 0
   }
 
   bindActions() {
@@ -32,7 +33,7 @@ class SysMonit {
       rx2.metric(`fs:${fss.fs}:size`, () => Math.floor(this.report.storage.filesystems[i].size / 1024 / 1024))
     })
 
-    rx2.metric(`net:default`, () => this.report.default_interface)
+    //rx2.metric(`net:default`, () => this.report.default_interface)
 
     Object.keys(this.report.network).forEach(iface => {
       rx2.metric(`net:${iface}:tx_5`, () => this.report.network[iface].tx_5)
@@ -57,11 +58,9 @@ class SysMonit {
 
     this.bindActions()
 
-    setTimeout(() => {
-      this.bindMetrics()
-    }, 1200)
-
     setInterval(() => {
+      if (this.pass++ < 4)
+        this.bindMetrics()
       this.report = this.sysinfos.report()
     }, 1000)
   }
