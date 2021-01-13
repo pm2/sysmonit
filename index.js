@@ -29,8 +29,8 @@ class SysMonit {
 
     this.report.storage.filesystems.forEach((fss, i) => {
       if (!fss.fs) return
-      rx2.metric(`fs:${fss.fs}:use`, () => this.report.storage.filesystems[i].use)
-      rx2.metric(`fs:${fss.fs}:size`, () => Math.floor(this.report.storage.filesystems[i].size / 1024 / 1024))
+      rx2.metric(`fs:${fss.mount}:use`, () => this.report.storage.filesystems[i].use)
+      rx2.metric(`fs:${fss.mount}:size`, () => Math.floor(this.report.storage.filesystems[i].size / 1024 / 1024))
     })
 
     //rx2.metric(`net:default`, () => this.report.default_interface)
@@ -44,9 +44,11 @@ class SysMonit {
       rx2.metric(`net:${iface}:tx_dropped_60`, () => this.report.network[iface].tx_dropped_60)
     })
 
-    rx2.metric('graphics:mem:total', () => this.report.graphics.memTotal)
-    rx2.metric('graphics:mem:used', () => this.report.graphics.memUsed)
-    rx2.metric('graphics:temp', () => this.report.graphics.temperature)
+    if (this.report.graphics.memTotal) {
+      rx2.metric('graphics:mem:total', () => this.report.graphics.memTotal)
+      rx2.metric('graphics:mem:used', () => this.report.graphics.memUsed)
+      rx2.metric('graphics:temp', () => this.report.graphics.temperature)
+    }
 
     //rx2.transpose('report', () => this.report)
   }
