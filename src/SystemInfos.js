@@ -491,8 +491,9 @@ class SystemInfo {
 
   networkStatsWorker() {
     var latencyCollection, networkStatsCollection
+    var self = this
 
-    var grabStats = (inter) => {
+    function grabStats(inter) {
       let started = false
       let rx = 0
       let tx = 0
@@ -502,9 +503,9 @@ class SystemInfo {
       let tx_d = 0
       let net_interface = inter.iface;
 
-      (networkStatsCollection = () => {
+      function networkStatsCollection(net_interface) {
 
-        this.infos.network[net_interface] = {
+        self.infos.network[net_interface] = {
           ip4: inter.ip4,
           ip6: inter.ip6,
           latency: new MeanCalc(5),
@@ -534,21 +535,27 @@ class SystemInfo {
             tx_d = net[0].tx_dropped
 
             if (started == true) {
-              this.infos.network[net_interface].rx_5.add(new_rx)
-              this.infos.network[net_interface].tx_5.add(new_tx)
-              this.infos.network[net_interface].rx_errors_60.add(new_rx_e)
-              this.infos.network[net_interface].tx_errors_60.add(new_tx_e)
-              this.infos.network[net_interface].rx_dropped_60.add(new_rx_d)
-              this.infos.network[net_interface].tx_dropped_60.add(new_tx_d)
+              self.infos.network[net_interface].rx_5.add(new_rx)
+              self.infos.network[net_interface].tx_5.add(new_tx)
+              self.infos.network[net_interface].rx_errors_60.add(new_rx_e)
+              self.infos.network[net_interface].tx_errors_60.add(new_tx_e)
+              self.infos.network[net_interface].rx_dropped_60.add(new_rx_d)
+              self.infos.network[net_interface].tx_dropped_60.add(new_tx_d)
             }
             started = true
-            setTimeout(networkStatsCollection.bind(this), 1000)
+            setTimeout(() => {
+              networkStatsCollection(net_interface)
+            }, 1000)
           })
           .catch(e => {
             console.error(`Error on retrieving network stats`, e)
-            setTimeout(networkStatsCollection.bind(this), 900)
+            setTimeout(() => {
+              networkStatsCollection(net_interface)
+            }, 1000)
           })
-      })()
+      }
+
+      networkStatsCollection(net_interface)
     }
 
     sysinfo.networkInterfaces()
