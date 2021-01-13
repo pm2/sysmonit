@@ -37,7 +37,7 @@ class SysMonit {
 
     Object.keys(this.report.network).forEach(iface => {
       rx2.metric(`net:${iface}:tx_5`, () => this.report.network[iface].tx_5)
-      rx2.metric(`net:${iface}:rx_5`, () => this.report.network[iface].tx_5)
+      rx2.metric(`net:${iface}:rx_5`, () => this.report.network[iface].rx_5)
       rx2.metric(`net:${iface}:rx_errors_60`, () => this.report.network[iface].rx_errors_60)
       rx2.metric(`net:${iface}:tx_errors_60`, () => this.report.network[iface].tx_errors_60)
       rx2.metric(`net:${iface}:rx_dropped_60`, () => this.report.network[iface].rx_dropped_60)
