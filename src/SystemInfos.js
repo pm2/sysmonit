@@ -66,6 +66,7 @@ class SystemInfo {
         }]
       },
       connections: ['source_ip:source_port-dest_ip:dest_port-proc_name'],
+      default_interface: null,
       network: {},
       // Procs
       containers: [],
@@ -218,6 +219,14 @@ class SystemInfo {
         })
     }
 
+
+    var getDefaultNetInterface = () => {
+      return sysinfo.networkInterfaceDefault()
+        .then(iface => {
+          this.infos.default_interface = iface
+        })
+    }
+
     var getOsInfo = () => {
       return sysinfo.osInfo()
         .then(data => {
@@ -253,6 +262,7 @@ class SystemInfo {
       .then(getCPU)
       .then(getOsInfo)
       .then(diskLayout)
+      .then(getDefaultNetInterface)
       .catch(e => {
         debug(`Error when trying to retrieve static informations`, e)
       })

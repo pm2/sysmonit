@@ -32,6 +32,8 @@ class SysMonit {
       rx2.metric(`fs:${fss.fs}:size`, () => Math.floor(this.report.storage.filesystems[i].size / 1024 / 1024))
     })
 
+    rx2.metric(`net:default`, () => this.report.default_interface)
+
     Object.keys(this.report.network).forEach(iface => {
       rx2.metric(`net:${iface}:tx_5`, () => this.report.network[iface].tx_5)
       rx2.metric(`net:${iface}:rx_5`, () => this.report.network[iface].tx_5)
