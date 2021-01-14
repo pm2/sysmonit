@@ -1,6 +1,6 @@
 {
   "name": "pm2-sysmonit",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "PM2.io System Monitoring",
   "main": "index.js",
   "scripts": {},
@@ -16,6 +16,7 @@
   "dependencies": {
     "async": "^3.2.0",
     "debug": "^4.3.1",
+    "pidusage": "^2.0.21",
     "rx2": "^1.0.1",
     "systeminformation": "^4.34.6"
   }
