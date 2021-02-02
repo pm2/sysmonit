@@ -167,7 +167,7 @@ class SystemInfo {
       })
     })();
 
-    this.networkConnectionsWorker()
+    //this.networkConnectionsWorker()
     this.disksStatsWorker()
     this.networkStatsWorker()
 
