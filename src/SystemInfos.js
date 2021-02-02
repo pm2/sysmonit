@@ -393,7 +393,6 @@ class SystemInfo {
   memStats(cb) {
     sysinfo.mem()
       .then(data => {
-        console.log(data.active, data.total)
         this.infos.mem.total = (data.total / DEFAULT_CONVERSION / 1024).toFixed(2)
         this.infos.mem.free = (data.free / DEFAULT_CONVERSION / 1024).toFixed(2)
         this.infos.mem.active = (data.active / DEFAULT_CONVERSION / 1024).toFixed(2)

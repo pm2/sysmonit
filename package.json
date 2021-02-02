@@ -1,6 +1,6 @@
 {
   "name": "pm2-sysmonit",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "PM2.io System Monitoring",
   "main": "index.js",
   "scripts": {},
