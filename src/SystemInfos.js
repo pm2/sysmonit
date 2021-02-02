@@ -369,7 +369,7 @@ class SystemInfo {
     (cpuTempCollection = () => {
       sysinfo.cpuTemperature()
         .then(data => {
-          this.infos.cpu.temperature = data.main
+          this.infos.cpu.temperature = (data.main).toFixed(1)
           setTimeout(cpuTempCollection.bind(this), 5000)
         })
         .catch(e => {
