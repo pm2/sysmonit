@@ -42,45 +42,46 @@ class SysMonit {
   }
 
   bindMetrics() {
-    tx2.metric('pm2:cpu', () => this.pm2_report.pm2.cpu)
-    tx2.metric('pm2:mem', () => this.pm2_report.pm2.mem)
+    tx2.metric('PM2 CPU Usage', '%', () => this.pm2_report.pm2.cpu)
+    tx2.metric('PM2 Memory Usage', 'mb', () => this.pm2_report.pm2.mem)
 
-    tx2.metric('pm2:agent:cpu', () => this.pm2_report.agent.cpu)
-    tx2.metric('pm2:agent:mem', () => this.pm2_report.agent.mem)
+    tx2.metric('PM2 Agent CPU Usage', '%', () => this.pm2_report.agent.cpu)
+    tx2.metric('PM2 Agent Memory Usage', 'mb', () => this.pm2_report.agent.mem)
 
     /**
      * From Sysinfo
      */
-    tx2.metric('cpu', () => this.report.cpu.load)
-    tx2.metric('cpus', () => this.report.cpu.loads)
-    tx2.metric('cpu:temp', () => this.report.cpu.temperature)
-    tx2.metric('mem:total', () => this.report.mem.total)
-    tx2.metric('mem:free', () => this.report.mem.free)
-    tx2.metric('mem:active', () => this.report.mem.active)
-    tx2.metric('mem:available', () => this.report.mem.available)
-    tx2.metric('fd', () => this.report.fd.opened)
-    tx2.metric('io:r', () => this.report.storage.io.read)
-    tx2.metric('io:w', () => this.report.storage.io.write)
+    tx2.metric('CPU Usage', '%', () => this.report.cpu.load)
+    tx2.metric('CPUs Usage', () => this.report.cpu.loads)
+    tx2.metric('CPU Temperature', '°C', () => this.report.cpu.temperature)
+    tx2.metric('RAM Total', 'gb', () => this.report.mem.total)
+    tx2.metric('RAM Free', 'gb', () => this.report.mem.free)
+    tx2.metric('RAM Active', 'gb', () => this.report.mem.active)
+    tx2.metric('RAM Available', 'gb', () => this.report.mem.available)
+    tx2.metric('RAM USage', '%', () => this.report.mem.usage)
+    tx2.metric('FD Opened', () => this.report.fd.opened)
+    tx2.metric('Disk Writes', 'mb/s', () => this.report.storage.io.read)
+    tx2.metric('Disk Reads', 'mb/s', () => this.report.storage.io.write)
 
     this.report.storage.filesystems.forEach((fss, i) => {
       if (!fss.fs) return
-      tx2.metric(`fs:use:${fss.mount}`, () => this.report.storage.filesystems[i].use)
-      tx2.metric(`fs:size:${fss.mount}`, () => Math.floor(this.report.storage.filesystems[i].size / 1024 / 1024))
+      tx2.metric(`fs:use:${fss.fs}`, '%', () => this.report.storage.filesystems[i].use)
+      tx2.metric(`fs:size:${fss.fs}`, 'gb', () => (this.report.storage.filesystems[i].size / 1024 / 1024 / 1024).toFixed(2))
     })
 
     Object.keys(this.report.network).forEach(iface => {
-      tx2.metric(`net:tx_5:${iface}`, () => this.report.network[iface].tx_5)
-      tx2.metric(`net:rx_5:${iface}`, () => this.report.network[iface].rx_5)
-      tx2.metric(`net:rx_errors_60:${iface}`, () => this.report.network[iface].rx_errors_60)
-      tx2.metric(`net:tx_errors_60:${iface}`, () => this.report.network[iface].tx_errors_60)
-      tx2.metric(`net:rx_dropped_60:${iface}`, () => this.report.network[iface].rx_dropped_60)
-      tx2.metric(`net:tx_dropped_60:${iface}`, () => this.report.network[iface].tx_dropped_60)
+      tx2.metric(`net:tx_5:${iface}`, 'mb/s', () => this.report.network[iface].tx_5)
+      tx2.metric(`net:rx_5:${iface}`, 'mb/s', () => this.report.network[iface].rx_5)
+      tx2.metric(`net:rx_errors_60:${iface}`, '/min', () => this.report.network[iface].rx_errors_60)
+      tx2.metric(`net:tx_errors_60:${iface}`, '/min', () => this.report.network[iface].tx_errors_60)
+      tx2.metric(`net:rx_dropped_60:${iface}`, '/min', () => this.report.network[iface].rx_dropped_60)
+      tx2.metric(`net:tx_dropped_60:${iface}`, '/min', () => this.report.network[iface].tx_dropped_60)
     })
 
     if (this.report.graphics.memTotal) {
-      tx2.metric('graphics:mem:total', () => this.report.graphics.memTotal)
-      tx2.metric('graphics:mem:used', () => this.report.graphics.memUsed)
-      tx2.metric('graphics:temp', () => this.report.graphics.temperature)
+      tx2.metric('graphics:mem:total', 'mb', () => this.report.graphics.memTotal)
+      tx2.metric('graphics:mem:used', 'mb', () => this.report.graphics.memUsed)
+      tx2.metric('graphics:temp', '°C', () => this.report.graphics.temperature)
     }
 
     //tx2.transpose('report', () => this.report)

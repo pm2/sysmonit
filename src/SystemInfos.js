@@ -36,7 +36,8 @@ class SystemInfo {
       mem: {
         total: null,
         free: null,
-        active: null
+        active: null,
+        usage: null
       },
       os: {
         platform: null,
@@ -379,7 +380,7 @@ class SystemInfo {
     (cpuLoad = () => {
       sysinfo.currentLoad()
         .then(data => {
-          this.infos.cpu.load = data.currentload.toFixed(1)
+          this.infos.cpu.load = data.currentLoad.toFixed(1)
           this.infos.cpu.loads = data.cpus.map(cpu => Math.floor(cpu.load)).join('|')
           setTimeout(cpuLoad.bind(this), 1000)
         })
@@ -392,10 +393,12 @@ class SystemInfo {
   memStats(cb) {
     sysinfo.mem()
       .then(data => {
-        this.infos.mem.total = (data.total / DEFAULT_CONVERSION).toFixed()
-        this.infos.mem.free = (data.free / DEFAULT_CONVERSION).toFixed()
-        this.infos.mem.active = (data.active / DEFAULT_CONVERSION).toFixed()
-        this.infos.mem.available = (data.available / DEFAULT_CONVERSION).toFixed()
+        console.log(data.active, data.total)
+        this.infos.mem.total = (data.total / DEFAULT_CONVERSION / 1024).toFixed(2)
+        this.infos.mem.free = (data.free / DEFAULT_CONVERSION / 1024).toFixed(2)
+        this.infos.mem.active = (data.active / DEFAULT_CONVERSION / 1024).toFixed(2)
+        this.infos.mem.available = (data.available / DEFAULT_CONVERSION / 1024).toFixed(2)
+        this.infos.mem.usage = ((data.active / data.total) * 100).toFixed(1)
         return cb()
       })
       .catch(e => {
@@ -433,7 +436,8 @@ class SystemInfo {
     (fsSizeCollection = () => {
       sysinfo.fsSize()
         .then(fss => {
-          var fse = fss.filter(fs => (fs.size / (1024 * 1024)) > 200)
+          // Get only partition of > 800 and not /boot
+          var fse = fss.filter(fs => ((fs.size / (1024 * 1024)) > 800) && fs.mount != '/boot' && !fs.mount.includes('efi'))
           this.infos.storage.filesystems = fse
           setTimeout(fsSizeCollection.bind(this), 30 * 1000)
         })
@@ -593,4 +597,8 @@ module.exports = SystemInfo
 if (require.main === module) {
   var sys = new SystemInfo()
   sys.startCollection()
+
+  setInterval(() => {
+    console.log(JSON.stringify(sys.report(), null, 2))
+  }, 5000)
 }
