@@ -58,7 +58,7 @@ class SysMonit {
     tx2.metric('RAM Free', 'gb', () => this.report.mem.free)
     tx2.metric('RAM Active', 'gb', () => this.report.mem.active)
     tx2.metric('RAM Available', 'gb', () => this.report.mem.available)
-    tx2.metric('RAM USage', '%', () => this.report.mem.usage)
+    tx2.metric('RAM Usage', '%', () => this.report.mem.usage)
     tx2.metric('FD Opened', () => this.report.fd.opened)
     tx2.metric('Disk Writes', 'mb/s', () => this.report.storage.io.read)
     tx2.metric('Disk Reads', 'mb/s', () => this.report.storage.io.write)
