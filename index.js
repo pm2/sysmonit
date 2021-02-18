@@ -48,8 +48,8 @@ class SysMonit {
       return (p.use < v.use ? p : v)
     })
 
-    tx2.metric(`fs:use`, '%', () => most_used_disk.use)
-    tx2.metric(`fs:size`, 'gb', () => (most_used_disk.size / 1024 / 1024 / 1024).toFixed(2))
+    tx2.metric(`Disk Usage`, '%', () => most_used_disk.use)
+    tx2.metric(`Disk Size`, 'gb', () => (most_used_disk.size / 1024 / 1024 / 1024).toFixed(2))
 
     let tx5 = 0, rx5 = 0
     Object.keys(this.report.network).forEach(iface => {
@@ -57,8 +57,8 @@ class SysMonit {
       rx5 += this.report.network[iface].rx_5
 
     })
-    tx2.metric(`net:tx_5:all`, 'mb/s', () => tx5)
-    tx2.metric(`net:rx_5:all`, 'mb/s', () => rx5)
+    tx2.metric(`Total TX`, 'mb/s', () => tx5)
+    tx2.metric(`Total RX`, 'mb/s', () => rx5)
   }
 
   bindMetrics() {
