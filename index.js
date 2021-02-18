@@ -28,6 +28,8 @@ class SysMonit {
       this.report = this.sysinfos.report()
       this.pm2_report = this.pm2infos.report()
 
+      this.processContinuousMetrics()
+
       if (process.env.VERBOSE) {
         console.log(JSON.stringify(this.report, '', 2))
         console.log(JSON.stringify(this.pm2_report, '', 2))
@@ -39,6 +41,24 @@ class SysMonit {
     tx2.action('info', (cb) => {
       cb(this.sysinfos.report())
     })
+  }
+
+  processContinuousMetrics() {
+    let most_used_disk = this.report.storage.filesystems.reduce((p, v) => {
+      return (p.use < v.use ? p : v)
+    })
+
+    tx2.metric(`fs:use`, '%', () => most_used_disk.use)
+    tx2.metric(`fs:size`, 'gb', () => (most_used_disk.size / 1024 / 1024 / 1024).toFixed(2))
+
+    let tx5 = 0, rx5 = 0
+    Object.keys(this.report.network).forEach(iface => {
+      tx5 += this.report.network[iface].tx_5
+      rx5 += this.report.network[iface].rx_5
+
+    })
+    tx2.metric(`net:tx_5:all`, 'mb/s', () => tx5)
+    tx2.metric(`net:rx_5:all`, 'mb/s', () => rx5)
   }
 
   bindMetrics() {
@@ -62,6 +82,7 @@ class SysMonit {
     tx2.metric('FD Opened', () => this.report.fd.opened)
     tx2.metric('Disk Writes', 'mb/s', () => this.report.storage.io.read)
     tx2.metric('Disk Reads', 'mb/s', () => this.report.storage.io.write)
+
 
     this.report.storage.filesystems.forEach((fss, i) => {
       if (!fss.fs) return
