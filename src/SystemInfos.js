@@ -344,6 +344,7 @@ class SystemInfo {
   graphicsInformations(cb) {
     sysinfo.graphics()
       .then(data => {
+        if (!data) return cb()
         let cg1 = data.controllers[0]
         if (!cg1) return cb()
 
