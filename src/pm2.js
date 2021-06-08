@@ -16,6 +16,25 @@ class PM2Monitoring {
     }, 900)
   }
 
+  getDefaultPM2Home() {
+    var PM2_ROOT_PATH;
+
+    if (process.env.PM2_HOME)
+      PM2_ROOT_PATH = process.env.PM2_HOME;
+    else if (process.env.HOME && !process.env.HOMEPATH)
+      PM2_ROOT_PATH = path.resolve(process.env.HOME, '.pm2');
+    else if (process.env.HOME || process.env.HOMEPATH)
+      PM2_ROOT_PATH = path.resolve(process.env.HOMEDRIVE, process.env.HOME || process.env.HOMEPATH, '.pm2');
+    else {
+      console.error('[PM2][Initialization] Environment variable HOME (Linux) or HOMEPATH (Windows) are not set!');
+      console.error('[PM2][Initialization] Defaulting to /etc/.pm2');
+      PM2_ROOT_PATH = path.resolve('/etc', '.pm2');
+    }
+
+    return PM2_ROOT_PATH;
+  }
+
+
   report() {
     return {
       pm2: this.pm2_monitoring,
@@ -24,7 +43,7 @@ class PM2Monitoring {
   }
 
   monitorPM2() {
-    let pm2_pid_file = path.join(process.env.HOME, '.pm2', 'pm2.pid')
+    let pm2_pid_file = path.join(this.getDefaultPM2Home(), 'pm2.pid')
 
     fs.readFile(pm2_pid_file, (err, pm2_pid) => {
       if (err) return console.error(`Could not read ${pm2_pid_file}`)
@@ -43,7 +62,7 @@ class PM2Monitoring {
   }
 
   monitorPM2Agent() {
-    let pm2_agent_pid_file = path.join(process.env.HOME, '.pm2', 'agent.pid')
+    let pm2_agent_pid_file = path.join(this.getDefaultPM2Home(), 'agent.pid')
 
     fs.readFile(pm2_agent_pid_file, (err, pm2_agent_pid) => {
       if (err) return
